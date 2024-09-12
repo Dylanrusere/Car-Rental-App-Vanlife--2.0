@@ -1,5 +1,5 @@
 import React from 'react';
-import './CartPopup.css'; // Add your CSS styles here
+import './CartPopup.css';
 
 export const CartPopup = ({ cart, removeFromCart, closePopup }) => {
   return (
@@ -10,7 +10,7 @@ export const CartPopup = ({ cart, removeFromCart, closePopup }) => {
         {cart.length === 0 ? (
           <p>Your cart is empty</p>
         ) : (
-          <ul>
+          <ul className='cart_list'>
             {cart.map((item, index) => (
               <li key={index} className="cart-item">
                 <img src={item.img} alt={item.name} className="cart-item-image" />

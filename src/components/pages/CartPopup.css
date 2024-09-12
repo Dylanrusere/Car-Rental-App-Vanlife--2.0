@@ -28,6 +28,11 @@
   h2 {
     margin-top: 0;
   }
+
+  .cart_list{
+    display: flex;
+    flex-direction: column;
+  }
   
   .cart-item {
     display: flex;
