@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Navbar } from "./components/navbar";
 import { About, Home, Vans, Signup, Profile, Vandetails } from "./components/pages";
@@ -8,7 +8,7 @@ import { HostVans } from "./components/pages/Host/HostVans";
 import { HostReviews } from "./components/pages/Host/HostReviews";
 import { HostIncome } from "./components/pages/Host/HostIncome";
 import { HostVansDetails } from "./components/pages/Host/HostVansDetails";
-import img1 from './images/image-53.png'
+import img1 from './images/image-53.png';
 
 function App() {
   // Centralized van data and cart state
@@ -20,6 +20,30 @@ function App() {
   ]);
 
   const [cart, setCart] = useState([]);
+
+  // Load cart from local storage on component mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart);
+        setCart(parsedCart);
+        console.log('Parsed:', parsedCart);
+      } catch (error) {
+        console.error("Error parsing saved cart:", error);
+        setCart([]); // Reset cart if parsing fails
+      }
+    }
+  }, []);
+
+  // Save cart to local storage whenever it changes
+  useEffect(() => {
+    if (cart.length > 0) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    } else {
+      localStorage.removeItem('cart'); // Clear storage if cart is empty
+    }
+  }, [cart]); // This ensures localStorage is updated whenever cart changes
 
   // Function to mark a van as rented and update cart
   const rentVan = (vanId) => {

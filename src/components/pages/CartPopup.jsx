@@ -1,7 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './CartPopup.css';
 
-export const CartPopup = ({ cart, removeFromCart, closePopup }) => {
+export const CartPopup = ({ removeFromCart, closePopup }) => {
+  const [cart, setCart] = useState([]);
+
+  // Load cart from local storage on component mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart);
+        setCart(parsedCart);
+        console.log('Parsed:', parsedCart);
+      } catch (error) {
+        console.error("Error parsing saved cart:", error);
+        setCart([]); // Reset cart if parsing fails
+      }
+    }
+  }, []);
+
+  // Save cart to local storage whenever it changes
+  useEffect(() => {
+    if (cart.length > 0) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    } else {
+      localStorage.removeItem('cart'); // Clear storage if cart is empty
+    }
+  }, [cart]);
+
   return (
     <div className="cart-popup">
       <div className="cart-popup-content">

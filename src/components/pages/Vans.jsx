@@ -8,29 +8,51 @@ export const Vans = ({ vans, rentVan }) => {
   // Load cart from local storage on component mount
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
-    console.log("Saved cart from localStorage:", savedCart); // Log raw data
-    const parsedCart = JSON.parse(savedCart) || [];
-    console.log("Parsed cart:", parsedCart); // Log parsed data
-    setCart(parsedCart);
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart);
+        setCart(parsedCart);
+      } catch (error) {
+        console.error("Error parsing saved cart:", error);
+        setCart([]); // Reset cart if parsing fails
+      }
+    }
   }, []);
+  
+  // This useEffect will log the updated cart after it's set
+  useEffect(() => {
+    console.log("Updated cart:", cart);
+  }, [cart]);
+  
 
   // Save cart to local storage whenever cart changes
   useEffect(() => {
-    console.log("Cart updated:", cart); // Log updated cart
-    localStorage.setItem('cart', JSON.stringify(cart));
+    console.log('updated updated cart:', cart);
+    if (cart.length > 0) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+      const savedCart = localStorage.getItem('cart');
+      // console.log('upadted savedCart',savedCart);
+    } else {
+      localStorage.removeItem('cart'); // Clean up empty cart from storage
+    }
   }, [cart]);
 
   const handleFilterChange = (filterType) => {
     setFilter(filterType);
   };
 
+
   const handleRent = (van) => {
     if (!van.rented) {
       // Mark the van as rented
       const updatedVans = vans.map(v => v.id === van.id ? { ...v, rented: true } : v);
       const updatedCart = [...cart, van];
+      // console.log('updated cart vans',updatedVans);
       
-      setCart(updatedCart);
+      // setCart(updatedCart);
+      const rentedVans = updatedVans.filter(van => van.rented === true);
+      setCart(rentedVans);
+      console.log('updated cart vans', cart);
       rentVan(van.id); // Assuming this updates the server or backend
     }
   };
@@ -57,7 +79,11 @@ export const Vans = ({ vans, rentVan }) => {
     };
   };
 
-  const filteredVans = filter === "All" ? vans : vans.filter(van => van.type === filter && !van.rented);
+
+  const filteredVans = filter === "All"
+  ? vans.filter(van => !cart.some(cartItem => cartItem.id === van.id))
+  : vans.filter(van => van.type === filter && !cart.some(cartItem => cartItem.id === van.id));
+
 
   return (
     <div>

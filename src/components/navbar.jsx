@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from './pages/firebase'; // Correct file name and path
@@ -66,7 +66,7 @@ export const Navbar = ({ cart, removeFromCart }) => {
       </ul>
       {cartVisible && (
         <CartPopup
-          cart={cart}
+          // cart={cart}
           removeFromCart={removeFromCart}
           closePopup={() => setCartVisible(false)}
         />
